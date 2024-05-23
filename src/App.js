@@ -8,6 +8,8 @@ import {
 
 import Home from "./Home";
 import LoginPage from "./LoginPage";
+import RegistrationPage from "./RegistrationPage";
+
 
 export default function App() {
     return (
@@ -21,6 +23,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Home/>}/>
                     <Route path="/login-page" element={<LoginPage/>}/>
+                    <Route path="/registration-page" element={<RegistrationPage/>}/>
                 </Routes>
 
                 {/*<Footer />*/}

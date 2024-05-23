@@ -35,7 +35,7 @@ function ModeToggle() {
 }
 
 
-const LoginPage = () => {
+const RegistrationPage= () => {
     return (
         <CssVarsProvider>
             <ModeToggle />
@@ -57,7 +57,7 @@ const LoginPage = () => {
                     <Typography level="h4" component="h1">
                         Welcome!
                     </Typography>
-                    <Typography level="body-sm">Sign in to continue.</Typography>
+                    <Typography level="body-sm">Sign up to continue.</Typography>
                 </div>
 
                 <FormControl>
@@ -78,15 +78,24 @@ const LoginPage = () => {
                     />
                 </FormControl>
 
+                <FormControl>
+                    <FormLabel>Password</FormLabel>
+                    <Input
+                        name="password"
+                        type="password"
+                        placeholder="repeat password"
+                    />
+                </FormControl>
+
                 <Button sx={{ mt: 1 /* margin top */ }}>
-                    Log in
+                    Sign up
                 </Button>
                 <Typography
-                    endDecorator={<Link href="/registration-page">Sign up</Link>}
+                    endDecorator={<Link href="/login-page">Log in</Link>}
                     fontSize="sm"
                     sx={{ alignSelf: 'center' }}
                 >
-                    Don't have an account?
+                    Back to login page?
                 </Typography>
 
             </Sheet>
@@ -95,4 +104,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegistrationPage;
