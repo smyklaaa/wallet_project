@@ -8,22 +8,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/login-page")
+@RequestMapping("/registration-page")
 @CrossOrigin
-public class LoginPageController {
+public class RegistrationPageController {
+
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login-page/login")
+    @PostMapping("/add-user")
     public ResponseEntity<String> add(@RequestBody User user){
         if (userService.checkIfUserInDatabase(user.getName())){
-
             return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
         } else {
             userService.saveNewUser(user);
             return new ResponseEntity<>("Thank you for your registration!", HttpStatus.OK);
         }
     }
-
 
 }
