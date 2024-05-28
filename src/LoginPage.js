@@ -35,6 +35,31 @@ function ModeToggle() {
 }
 
 
+const handleClick = (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    const user = { name, password };
+
+    fetch("http://localhost:8080/login-page/login", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user)
+    }).then(response => {
+        if (response.status === 409) {
+            setError('User already exists');
+        } else if (response.ok) {
+            setSuccess('Thank you for your registration!');
+        } else {
+            setError('An error occurred. Please try again.');
+        }
+    }).catch(() => {
+        setError('An error occurred. Please try again.');
+    });
+};
+
+
 const LoginPage = () => {
     return (
         <CssVarsProvider>
@@ -78,8 +103,9 @@ const LoginPage = () => {
                     />
                 </FormControl>
 
-                <Button sx={{ mt: 1 /* margin top */ }}>
+                <Button sx={{ mt: 1 /* margin top */ }} nClick={handleClick}>
                     Log in
+
                 </Button>
                 <Typography
                     endDecorator={<Link href="/registration-page">Sign up</Link>}

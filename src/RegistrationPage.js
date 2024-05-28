@@ -1,5 +1,5 @@
-import React from 'react';
-import {CssVarsProvider, useColorScheme} from '@mui/joy/styles';
+import React, { useState } from 'react';
+import { CssVarsProvider, useColorScheme } from '@mui/joy/styles';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import FormControl from '@mui/joy/FormControl';
@@ -8,13 +8,11 @@ import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 
-
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
     const [mounted, setMounted] = React.useState(false);
 
-    // necessary for server-side rendering
-    // because mode is undefined on the server
+
     React.useEffect(() => {
         setMounted(true);
     }, []);
@@ -34,8 +32,42 @@ function ModeToggle() {
     );
 }
 
+const RegistrationPage = () => {
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+    const [repeatPassword, setRepeatPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-const RegistrationPage= () => {
+    const handleClick = (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        if (password !== repeatPassword) {
+            setError('Passwords do not match!');
+            return;
+        }
+
+        const user = { name, password };
+
+        fetch("http://localhost:8080/registration-page/add-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        }).then(response => {
+            if (response.status === 409) {
+                setError('User already exists');
+            } else if (response.ok) {
+                setSuccess('Thank you for your registration!');
+            } else {
+                setError('An error occurred. Please try again.');
+            }
+        }).catch(() => {
+            setError('An error occurred. Please try again.');
+        });
+    };
+
     return (
         <CssVarsProvider>
             <ModeToggle />
@@ -63,10 +95,11 @@ const RegistrationPage= () => {
                 <FormControl>
                     <FormLabel>Email</FormLabel>
                     <Input
-                        // html input attribute
                         name="email"
                         type="email"
                         placeholder="johndoe@email.com"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
                 </FormControl>
                 <FormControl>
@@ -75,19 +108,34 @@ const RegistrationPage= () => {
                         name="password"
                         type="password"
                         placeholder="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </FormControl>
 
                 <FormControl>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Repeat Password</FormLabel>
                     <Input
-                        name="password"
+                        name="repeat-password"
                         type="password"
                         placeholder="repeat password"
+                        value={repeatPassword}
+                        onChange={(e) => setRepeatPassword(e.target.value)}
                     />
                 </FormControl>
 
-                <Button sx={{ mt: 1 /* margin top */ }}>
+                {error && (
+                    <Typography color="danger" fontSize="sm">
+                        {error}
+                    </Typography>
+                )}
+                {success && (
+                    <Typography color="success" fontSize="sm">
+                        {success}
+                    </Typography>
+                )}
+
+                <Button sx={{ mt: 1 /* margin top */ }} onClick={handleClick}>
                     Sign up
                 </Button>
                 <Typography
@@ -97,9 +145,7 @@ const RegistrationPage= () => {
                 >
                     Back to login page?
                 </Typography>
-
             </Sheet>
-
         </CssVarsProvider>
     );
 };

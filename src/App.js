@@ -6,7 +6,6 @@ import {
     Routes
 } from 'react-router-dom';
 
-import Home from "./Home";
 import LoginPage from "./LoginPage";
 import RegistrationPage from "./RegistrationPage";
 
@@ -21,7 +20,7 @@ export default function App() {
                     </ul>
                 </nav>
                 <Routes>
-                    <Route path="/" element={<Home/>}/>
+                    <Route path="/" element={<LoginPage/>}/>
                     <Route path="/login-page" element={<LoginPage/>}/>
                     <Route path="/registration-page" element={<RegistrationPage/>}/>
                 </Routes>
