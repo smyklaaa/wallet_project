@@ -1,5 +1,5 @@
-import React from 'react';
-import {CssVarsProvider, useColorScheme} from '@mui/joy/styles';
+import React, { useState } from 'react';
+import { CssVarsProvider, useColorScheme } from '@mui/joy/styles';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import FormControl from '@mui/joy/FormControl';
@@ -8,16 +8,14 @@ import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 
-
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
     const [mounted, setMounted] = React.useState(false);
 
-    // necessary for server-side rendering
-    // because mode is undefined on the server
     React.useEffect(() => {
         setMounted(true);
     }, []);
+
     if (!mounted) {
         return null;
     }
@@ -34,43 +32,53 @@ function ModeToggle() {
     );
 }
 
-
-const handleClick = (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    const user = { name, password };
-
-    fetch("http://localhost:8080/login-page/login", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user)
-    }).then(response => {
-        if (response.status === 409) {
-            setError('User already exists');
-        } else if (response.ok) {
-            setSuccess('Thank you for your registration!');
-        } else {
-            setError('An error occurred. Please try again.');
-        }
-    }).catch(() => {
-        setError('An error occurred. Please try again.');
-    });
-};
-
-
 const LoginPage = () => {
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    const handleClick = (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        const user = { name, password };
+
+        fetch("http://localhost:8080/login-page/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        })
+            .then(response => {
+                if (response.status === 404) {
+                    setError('User does not exist');
+                } else if (response.status === 409) {
+                    setError('Wrong password');
+                } else if (response.ok) {
+                    setSuccess('Login successful!');
+                    alert("TEST123")
+                } else {
+                    console.log(response)
+                    setError('An error occurred. Please try again.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setError('An error occurred. Please try again.');
+            });
+    };
+
     return (
         <CssVarsProvider>
             <ModeToggle />
             <Sheet
                 sx={{
                     width: 300,
-                    mx: 'auto', // margin left & right
-                    my: 4, // margin top & bottom
-                    py: 3, // padding top & bottom
-                    px: 2, // padding left & right
+                    mx: 'auto',
+                    my: 4,
+                    py: 3,
+                    px: 2,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 2,
@@ -88,10 +96,11 @@ const LoginPage = () => {
                 <FormControl>
                     <FormLabel>Email</FormLabel>
                     <Input
-                        // html input attribute
                         name="email"
                         type="email"
                         placeholder="johndoe@email.com"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
                 </FormControl>
                 <FormControl>
@@ -100,12 +109,24 @@ const LoginPage = () => {
                         name="password"
                         type="password"
                         placeholder="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </FormControl>
 
-                <Button sx={{ mt: 1 /* margin top */ }} nClick={handleClick}>
-                    Log in
+                {error && (
+                    <Typography color="danger" fontSize="sm">
+                        {error}
+                    </Typography>
+                )}
+                {success && (
+                    <Typography color="success" fontSize="sm">
+                        {success}
+                    </Typography>
+                )}
 
+                <Button sx={{ mt: 1 }} onClick={handleClick}>
+                    Log in
                 </Button>
                 <Typography
                     endDecorator={<Link href="/registration-page">Sign up</Link>}
@@ -114,9 +135,7 @@ const LoginPage = () => {
                 >
                     Don't have an account?
                 </Typography>
-
             </Sheet>
-
         </CssVarsProvider>
     );
 };
