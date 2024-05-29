@@ -23,7 +23,6 @@ public class UserService {
         return userByName.isPresent();
     }
 
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

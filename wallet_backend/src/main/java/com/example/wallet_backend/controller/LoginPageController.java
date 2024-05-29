@@ -14,16 +14,18 @@ public class LoginPageController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login-page/login")
+    @GetMapping("/test")
+    public ResponseEntity<String> test(){
+        return new ResponseEntity<>("test", HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
     public ResponseEntity<String> add(@RequestBody User user){
         if (userService.checkIfUserInDatabase(user.getName())){
-
             return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
         } else {
             userService.saveNewUser(user);
             return new ResponseEntity<>("Thank you for your registration!", HttpStatus.OK);
         }
     }
-
-
 }
