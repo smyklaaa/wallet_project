@@ -28,7 +28,6 @@ public class UserService {
         return user.getPassword().equals(password);
     }
 
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
