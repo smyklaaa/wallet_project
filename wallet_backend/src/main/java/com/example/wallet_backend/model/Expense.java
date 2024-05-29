@@ -2,15 +2,12 @@ package com.example.wallet_backend.model;
 
 import com.example.wallet_backend.model.enums.ExpenseTypeEnum;
 import com.example.wallet_backend.model.enums.OperationTypeEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,9 +17,11 @@ public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int id;
-    private int user_id;
+
+    @ManyToOne
+    private User user;
+
     private int amount;
 
     @Enumerated(EnumType.STRING)
@@ -30,4 +29,6 @@ public class Expense {
 
     @Enumerated(EnumType.STRING)
     private ExpenseTypeEnum type;
+
+    private LocalDateTime date;
 }
