@@ -23,6 +23,11 @@ public class UserService {
         return userByName.isPresent();
     }
 
+    public boolean checkIfCorrectPassword(String userName, String password) {
+        User user = userRepository.findUserByName(userName).get();
+        return user.getPassword().equals(password);
+    }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

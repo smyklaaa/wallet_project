@@ -9,21 +9,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/login-page")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class LoginPageController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login-page/login")
-    public ResponseEntity<String> add(@RequestBody User user){
-        if (userService.checkIfUserInDatabase(user.getName())){
-
-            return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User user) {
+        if (userService.checkIfUserInDatabase(user.getName())) {
+            if (userService.checkIfCorrectPassword(user.getName(), user.getPassword())){
+                return new ResponseEntity<>("Login successful", HttpStatus.OK);
+            }else return new ResponseEntity<>("Wrong password", HttpStatus.CONFLICT);
         } else {
-            userService.saveNewUser(user);
-            return new ResponseEntity<>("Thank you for your registration!", HttpStatus.OK);
+            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
         }
     }
-
-
 }
