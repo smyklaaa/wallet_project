@@ -14,12 +14,7 @@ public class LoginPageController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test(){
-        return new ResponseEntity<>("test", HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<String> add(@RequestBody User user){
         if (userService.checkIfUserInDatabase(user.getName())){
             return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
