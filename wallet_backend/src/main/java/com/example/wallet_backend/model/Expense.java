@@ -25,7 +25,7 @@ public class Expense {
     private int amount;
 
     @Enumerated(EnumType.STRING)
-    private OperationTypeEnum operation_type;
+    private OperationTypeEnum operationType;
 
     @Enumerated(EnumType.STRING)
     private ExpenseTypeEnum type;
