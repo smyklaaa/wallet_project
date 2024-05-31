@@ -8,6 +8,7 @@ import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 import { setCookieAfterLogin } from './IsCookieExpired';
+import {useNavigate} from "react-router-dom";
 
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
@@ -38,6 +39,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
 
     const handleClick = (e) => {
         e.preventDefault();
@@ -58,8 +60,7 @@ const LoginPage = () => {
                     setError('Wrong password');
                 } else if (response.ok) {
                     setSuccess('Login successful!');
-                    alert("TEST123")
-                    setCookieAfterLogin();
+                    navigate('/expenses');
                 } else {
                     console.log(response)
                     setError('An error occurred. Please try again.');

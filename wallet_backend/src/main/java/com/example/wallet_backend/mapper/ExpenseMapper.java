@@ -3,6 +3,8 @@ package com.example.wallet_backend.mapper;
 import com.example.wallet_backend.dto.ExpenseDTO;
 import com.example.wallet_backend.model.Expense;
 import com.example.wallet_backend.model.User;
+import com.example.wallet_backend.model.enums.ExpenseTypeEnum;
+import com.example.wallet_backend.model.enums.OperationTypeEnum;
 
 public class ExpenseMapper {
 
@@ -13,8 +15,8 @@ public class ExpenseMapper {
         Expense expense = new Expense();
         expense.setId(dto.getId());
         expense.setAmount(dto.getAmount());
-        expense.setOperationType(dto.getOperationType());
-        expense.setType(dto.getType());
+        expense.setOperationType(OperationTypeEnum.valueOf(dto.getOperationType()));
+        expense.setType(ExpenseTypeEnum.valueOf(dto.getType()));
         expense.setDate(dto.getDate());
 
         User user = new User();
