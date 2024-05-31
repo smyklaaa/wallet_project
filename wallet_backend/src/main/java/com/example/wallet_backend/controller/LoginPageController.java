@@ -25,6 +25,7 @@ public class LoginPageController {
         if (userService.checkIfUserInDatabase(user.getName())) {
             if (userService.loginUser(user.getName(), user.getPassword() )) {
                 session.setAttribute("user", user.getName());
+                System.out.println("value from login: " + session.getAttribute("user"));
                 return new ResponseEntity<>("Login successful!", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Wrong password", HttpStatus.CONFLICT);

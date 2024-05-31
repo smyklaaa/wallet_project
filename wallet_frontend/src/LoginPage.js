@@ -51,7 +51,8 @@ const LoginPage = () => {
         fetch("http://localhost:8080/login-page/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user)
+            body: JSON.stringify(user),
+            credentials: 'include'
         })
             .then(response => {
                 if (response.status === 404) {
@@ -60,6 +61,7 @@ const LoginPage = () => {
                     setError('Wrong password');
                 } else if (response.ok) {
                     setSuccess('Login successful!');
+                    setCookieAfterLogin();
                     navigate('/expenses');
                 } else {
                     console.log(response)
