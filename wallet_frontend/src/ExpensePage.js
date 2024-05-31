@@ -3,7 +3,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@ma
 import debounce from 'lodash.debounce';
 import {useColorScheme} from "@mui/joy/styles";
 import Button from "@mui/joy/Button";
-import {isCookieExpired} from "./Test";
+import {isCookieExpired} from "./IsCookieExpired";
 
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);

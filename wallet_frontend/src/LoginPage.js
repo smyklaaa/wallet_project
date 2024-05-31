@@ -7,7 +7,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
-import { setCookieAfterLogin } from './Test';
+import { setCookieAfterLogin } from './IsCookieExpired';
 
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();

@@ -18,15 +18,15 @@ public class LoginPageController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody User user, HttpSession session) {
         if (userService.checkIfUserInDatabase(user.getName())) {
-            //if (userService.loginUser(user.getName(), user.getPassword(), session)) {
+            if (userService.loginUser(user.getName(), user.getPassword(), session)) {
                 return new ResponseEntity<>("Login successful!", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Wrong password", HttpStatus.CONFLICT);
             }
-//        } else {
-//            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
-//        }
+        } else {
+            return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+        }
     }
 }
