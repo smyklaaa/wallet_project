@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@material-ui/core';
 import debounce from 'lodash.debounce';
+import {useColorScheme} from "@mui/joy/styles";
+import Button from "@mui/joy/Button";
+import {isCookieExpired} from "./Test";
 
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
@@ -19,7 +22,13 @@ function ExpenseTable() {
     };
 
     const fetchExpenses = async (filters) => {
+        if (isCookieExpired("loginDate")){
+            alert("wrong cookie")
+        }
+
         try {
+
+
             const queryParams = Object.fromEntries(
                 Object.entries(filters).filter(([key, value]) => value)
             );

@@ -7,6 +7,7 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
+import { setCookieAfterLogin } from './Test';
 
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
@@ -58,6 +59,7 @@ const LoginPage = () => {
                 } else if (response.ok) {
                     setSuccess('Login successful!');
                     alert("TEST123")
+                    setCookieAfterLogin();
                 } else {
                     console.log(response)
                     setError('An error occurred. Please try again.');

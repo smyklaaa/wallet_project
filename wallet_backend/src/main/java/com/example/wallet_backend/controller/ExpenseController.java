@@ -9,13 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
 @RequestMapping("/expense")
-@CrossOrigin
+@CrossOrigin("http://localhost:3000/")
 public class ExpenseController {
 
     @Autowired
@@ -45,35 +46,34 @@ public class ExpenseController {
             @RequestParam(required = false) String operationType,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
-
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
         ExpenseTypeEnum expenseTypeEnum;
-        if (type == null || "null".equals(type) || "".equals(type)) {
+        if (type == null || "null".equals(type) || type.isEmpty()) {
             expenseTypeEnum = null;
         } else {
             expenseTypeEnum = ExpenseTypeEnum.valueOf(type.toLowerCase());
         }
 
         OperationTypeEnum operationTypeEnum;
-        if (operationType == null || "null".equals(operationType) || "".equals(operationType)) {
+        if (operationType == null || "null".equals(operationType) || operationType.isEmpty()) {
             operationTypeEnum = null;
         } else {
             operationTypeEnum = OperationTypeEnum.valueOf(operationType.toLowerCase());
         }
 
         LocalDateTime start;
-        if (startDate == null || "null".equals(startDate) || "".equals(startDate)) {
-            start = null;
+        if (startDate == null || "null".equals(startDate) || startDate.isEmpty()) {
+            start = LocalDateTime.parse("0001-01-01T00:00:01");
         } else {
-            start = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
+            start = LocalDateTime.parse(startDate, formatter);
         }
 
         LocalDateTime end;
-        if (endDate == null || "null".equals(endDate) || "".equals(endDate)) {
-            end = null;
+        if (endDate == null || "null".equals(endDate) || endDate.isEmpty()) {
+            end = LocalDateTime.parse("9999-12-31T23:59:59");
         } else {
-            end = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;
+            end = LocalDateTime.parse(endDate, formatter);
         }
 
         List<ExpenseDTO> expenses = expenseService.findExpenses(userId, expenseTypeEnum, operationTypeEnum, start, end);
