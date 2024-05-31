@@ -191,14 +191,26 @@ function ExpenseTable() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {expenses.map((expense) => (
-                            <TableRow key={expense.id}>
-                                <TableCell>{expense.amount}</TableCell>
-                                <TableCell>{expense.type}</TableCell>
-                                <TableCell>{expense.operationType}</TableCell>
-                                <TableCell>{expense.date}</TableCell>
-                            </TableRow>
-                        ))}
+                        {expenses.map((expense) => {
+                            const date = new Date(expense.date);
+                            const formattedDate = date.toLocaleString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            });
+
+                            return (
+                                <TableRow key={expense.id}>
+                                    <TableCell>{expense.amount}</TableCell>
+                                    <TableCell>{expense.type}</TableCell>
+                                    <TableCell>{expense.operationType}</TableCell>
+                                    <TableCell>{formattedDate}</TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </div>
