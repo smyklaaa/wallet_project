@@ -19,10 +19,9 @@ public class ExpenseService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    public ExpenseDTO addExpense(ExpenseDTO expenseDTO) {
+    public Expense addExpense(ExpenseDTO expenseDTO) {
         Expense expense = ExpenseMapper.toEntity(expenseDTO);
-        Expense savedExpense = expenseRepository.save(expense);
-        return ExpenseMapper.toDTO(savedExpense);
+        return expenseRepository.save(expense);
     }
 
     public List<ExpenseDTO> getAllExpenses() {

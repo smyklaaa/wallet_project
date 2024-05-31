@@ -39,4 +39,11 @@ public class ExpenseDTO {
         this.type = String.valueOf(type);
         this.date = date;
     }
+    public ExpenseDTO(int userId, int amount, OperationTypeEnum operationType, ExpenseTypeEnum type, LocalDateTime date) {
+        this.userId = userId;
+        this.amount = amount;
+        this.operationType = String.valueOf(operationType);
+        this.type = String.valueOf(type);
+        this.date = date;
+    }
 }
