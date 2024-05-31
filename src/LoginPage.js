@@ -7,6 +7,8 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
 
 function ModeToggle() {
     const { mode, setMode } = useColorScheme();
@@ -37,6 +39,9 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
 
     const handleClick = (e) => {
         e.preventDefault();
@@ -57,9 +62,10 @@ const LoginPage = () => {
                     setError('Wrong password');
                 } else if (response.ok) {
                     setSuccess('Login successful!');
-                    alert("TEST123")
+                    login(); // Call login to update authentication state
+                    navigate('/welcome');
                 } else {
-                    console.log(response)
+                    console.log(response);
                     setError('An error occurred. Please try again.');
                 }
             })
