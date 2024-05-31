@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/login-page")
+@CrossOrigin("http://localhost:3000/")
 public class LoginPageController {
 
     @Autowired
