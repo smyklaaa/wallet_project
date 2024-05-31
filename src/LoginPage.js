@@ -43,6 +43,7 @@ const LoginPage = () => {
     const { login } = useAuth();
 
 
+
     const handleClick = (e) => {
         e.preventDefault();
         setError('');
@@ -52,6 +53,7 @@ const LoginPage = () => {
 
         fetch("http://localhost:8080/login-page/login", {
             method: "POST",
+            credentials: 'include',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user)
         })

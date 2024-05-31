@@ -5,7 +5,7 @@ import LoginPage from "./LoginPage";
 import RegistrationPage from "./RegistrationPage";
 import { AuthProvider } from './AuthProvider';
 import ProtectedRoute from './ProtectedRoute';
-import WelcomePage from './WelcomePage';
+import WelcomePage from './WelcomePage'; // Assuming you have a WelcomePage component
 
 export default function App() {
     return (
