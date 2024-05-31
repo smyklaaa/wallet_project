@@ -33,9 +33,9 @@ public class UserService {
         return false;
     }
 
-    public boolean loginUser(String userName, String password, HttpSession session) {
+    public boolean loginUser(String userName, String password) {
         if (checkIfCorrectPassword(userName, password)) {
-            session.setAttribute("user", userName);
+
             return true;
         }
         return false;
