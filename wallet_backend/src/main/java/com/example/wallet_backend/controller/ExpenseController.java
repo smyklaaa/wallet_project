@@ -41,17 +41,42 @@ public class ExpenseController {
     @GetMapping("/filter")
     public ResponseEntity<List<ExpenseDTO>> filterExpenses(
             @RequestParam Integer userId,
-            @RequestParam(required = false) ExpenseTypeEnum type,
-            @RequestParam(required = false) OperationTypeEnum operationType,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String operationType,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-        LocalDateTime start = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
-        LocalDateTime end = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;
+        ExpenseTypeEnum expenseTypeEnum;
+        if (type == null || "null".equals(type) || "".equals(type)) {
+            expenseTypeEnum = null;
+        } else {
+            expenseTypeEnum = ExpenseTypeEnum.valueOf(type.toLowerCase());
+        }
 
-        List<ExpenseDTO> expenses = expenseService.findExpenses(userId, type, operationType, start, end);
+        OperationTypeEnum operationTypeEnum;
+        if (operationType == null || "null".equals(operationType) || "".equals(operationType)) {
+            operationTypeEnum = null;
+        } else {
+            operationTypeEnum = OperationTypeEnum.valueOf(operationType.toLowerCase());
+        }
+
+        LocalDateTime start;
+        if (startDate == null || "null".equals(startDate) || "".equals(startDate)) {
+            start = null;
+        } else {
+            start = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
+        }
+
+        LocalDateTime end;
+        if (endDate == null || "null".equals(endDate) || "".equals(endDate)) {
+            end = null;
+        } else {
+            end = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;
+        }
+
+        List<ExpenseDTO> expenses = expenseService.findExpenses(userId, expenseTypeEnum, operationTypeEnum, start, end);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 }
