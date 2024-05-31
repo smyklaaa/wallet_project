@@ -4,19 +4,18 @@ import com.example.wallet_backend.dto.ExpenseDTO;
 import com.example.wallet_backend.model.enums.ExpenseTypeEnum;
 import com.example.wallet_backend.model.enums.OperationTypeEnum;
 import com.example.wallet_backend.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
 @RequestMapping("/expense")
-@CrossOrigin("http://localhost:3000/")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class ExpenseController {
 
     @Autowired
@@ -34,9 +33,14 @@ public class ExpenseController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody ExpenseDTO expense){
+    public ResponseEntity<String> add(@Valid @RequestBody ExpenseDTO expense) {
+        if (!isValidEnumValue(expense.getOperationType(), OperationTypeEnum.class) ||
+                !isValidEnumValue(expense.getType(), ExpenseTypeEnum.class)) {
+            return new ResponseEntity<>("Invalid type or operation type", HttpStatus.BAD_REQUEST);
+        }
+
         expenseService.addExpense(expense);
-        return new ResponseEntity<>("expense added", HttpStatus.OK);
+        return new ResponseEntity<>("Expense added", HttpStatus.OK);
     }
 
     @GetMapping("/filter")
@@ -78,5 +82,14 @@ public class ExpenseController {
 
         List<ExpenseDTO> expenses = expenseService.findExpenses(userId, expenseTypeEnum, operationTypeEnum, start, end);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
+    }
+
+    private <E extends Enum<E>> boolean isValidEnumValue(String value, Class<E> enumClass) {
+        for (E e : enumClass.getEnumConstants()) {
+            if (e.name().equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
