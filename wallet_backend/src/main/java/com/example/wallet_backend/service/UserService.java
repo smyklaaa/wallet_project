@@ -5,7 +5,7 @@ import com.example.wallet_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    public User saveNewUser(User user){
+
+    public User saveNewUser(User user) {
         return userRepository.save(user);
     }
 
@@ -24,8 +25,20 @@ public class UserService {
     }
 
     public boolean checkIfCorrectPassword(String userName, String password) {
-        User user = userRepository.findUserByName(userName).get();
-        return user.getPassword().equals(password);
+        Optional<User> userOptional = userRepository.findUserByName(userName);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return user.getPassword().equals(password);
+        }
+        return false;
+    }
+
+    public boolean loginUser(String userName, String password, HttpSession session) {
+        if (checkIfCorrectPassword(userName, password)) {
+            session.setAttribute("user", userName);
+            return true;
+        }
+        return false;
     }
 
     public List<User> getAllUsers() {
