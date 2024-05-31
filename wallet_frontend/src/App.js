@@ -8,6 +8,7 @@ import {
 
 import LoginPage from "./LoginPage";
 import RegistrationPage from "./RegistrationPage";
+import ExpensePage from "./ExpensePage";
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
                     <Route path="/" element={<LoginPage/>}/>
                     <Route path="/login-page" element={<LoginPage/>}/>
                     <Route path="/registration-page" element={<RegistrationPage/>}/>
+                    <Route path="/expenses" element={<ExpensePage/>}/>
                 </Routes>
 
                 {/*<Footer />*/}
