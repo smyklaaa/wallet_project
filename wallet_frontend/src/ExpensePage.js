@@ -3,7 +3,6 @@ import { Table, TableHead, TableBody, TableRow, TableCell, TextField } from '@ma
 import debounce from 'lodash.debounce';
 import Button from "@mui/joy/Button";
 import {isCookieExpired} from "./IsCookieExpired";
-import {red} from "@material-ui/core/colors";
 
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
@@ -33,19 +32,17 @@ function ExpenseTable() {
         if (isCookieExpired("loginDate")){
             alert("wrong cookie")
         }
-
         try {
-
-
             const queryParams = Object.fromEntries(
                 Object.entries(filters).filter(([key, value]) => value)
             );
             const params = new URLSearchParams(queryParams).toString();
-            const response = await fetch(`http://127.0.0.1:8080/expense/filter?${params}`, {
+            const response = await fetch(`http://localhost:8080/expense/filter?${params}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                credentials: 'include'
             });
             if (!response.ok) {
                 throw new Error('Failed to fetch expenses');
@@ -64,7 +61,8 @@ function ExpenseTable() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(expense)
+                body: JSON.stringify(expense),
+                credentials: 'include'
             });
             if (!response.ok) {
                 alert("Wrong values provided while adding new expense")

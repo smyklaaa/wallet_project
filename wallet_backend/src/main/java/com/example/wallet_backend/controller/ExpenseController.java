@@ -4,6 +4,7 @@ import com.example.wallet_backend.dto.ExpenseDTO;
 import com.example.wallet_backend.model.enums.ExpenseTypeEnum;
 import com.example.wallet_backend.model.enums.OperationTypeEnum;
 import com.example.wallet_backend.service.ExpenseService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/expense")
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true")
 public class ExpenseController {
 
     @Autowired
@@ -45,12 +46,14 @@ public class ExpenseController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<ExpenseDTO>> filterExpenses(
+            HttpSession session,
             @RequestParam Integer userId,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String operationType,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        System.out.println("value from expense: " + session.getAttribute("user"));
 
         ExpenseTypeEnum expenseTypeEnum;
         if (type == null || "null".equals(type) || type.isEmpty()) {
