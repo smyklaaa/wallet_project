@@ -1,9 +1,12 @@
 package com.example.wallet_backend.controller;
 
 import com.example.wallet_backend.dto.ExpenseDTO;
+import com.example.wallet_backend.model.Expense;
+import com.example.wallet_backend.model.User;
 import com.example.wallet_backend.model.enums.ExpenseTypeEnum;
 import com.example.wallet_backend.model.enums.OperationTypeEnum;
 import com.example.wallet_backend.service.ExpenseService;
+import com.example.wallet_backend.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,10 @@ public class ExpenseController {
 
     @Autowired
     private ExpenseService expenseService;
+    private final UserService userService;
+    public ExpenseController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/test")
     public ResponseEntity<String> test(){
@@ -33,27 +40,50 @@ public class ExpenseController {
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> add(@Valid @RequestBody ExpenseDTO expense) {
-        if (!isValidEnumValue(expense.getOperationType(), OperationTypeEnum.class) ||
-                !isValidEnumValue(expense.getType(), ExpenseTypeEnum.class)) {
-            return new ResponseEntity<>("Invalid type or operation type", HttpStatus.BAD_REQUEST);
+    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @GetMapping("/add")
+    public ResponseEntity<String> add(
+            HttpSession session,
+            @RequestParam() int amount,
+            @RequestParam() ExpenseTypeEnum type,
+            @RequestParam() OperationTypeEnum operationType,
+            @RequestParam() LocalDateTime date) {
+
+        // Validate session user and retrieve user ID
+        String username = (String) session.getAttribute("user");
+        if (username == null || username.isEmpty()) {
+            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
         }
 
-        expenseService.addExpense(expense);
-        return new ResponseEntity<>("Expense added", HttpStatus.OK);
+        int userId;
+        try {
+            userId = userService.getUserIdByName(username);
+        } catch (Exception e) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Create ExpenseDTO object
+        ExpenseDTO expense = new ExpenseDTO(userId, amount, operationType, type, date);
+
+        // Add expense and handle response
+        Expense savedExpense = expenseService.addExpense(expense);
+        expense.setId(savedExpense.getId());
+
+        return new ResponseEntity<>("Expense added with ID: " + expense.getId(), HttpStatus.OK);
     }
+
 
     @GetMapping("/filter")
     public ResponseEntity<List<ExpenseDTO>> filterExpenses(
             HttpSession session,
-            @RequestParam Integer userId,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String operationType,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        System.out.println("value from expense: " + session.getAttribute("user"));
+
+        int userId = userService.getUserIdByName((String) session.getAttribute("user"));
+        System.out.println("userId: " + userId);
 
         ExpenseTypeEnum expenseTypeEnum;
         if (type == null || "null".equals(type) || type.isEmpty()) {

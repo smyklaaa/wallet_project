@@ -7,7 +7,6 @@ import {isCookieExpired} from "./IsCookieExpired";
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
     const [filters, setFilters] = useState({
-        userId: 1,
         type: '',
         operationType: '',
         startDate: '',
@@ -15,7 +14,6 @@ function ExpenseTable() {
     });
 
     const [newExpense, setNewExpense] = useState({
-        userId: '',
         amount: '',
         operationType: '',
         type: '',
@@ -56,16 +54,18 @@ function ExpenseTable() {
 
     const addExpense = async (expense) => {
         try {
-            const response = await fetch('http://127.0.0.1:8080/expense/add', {
-                method: 'POST',
+            const queryParams = Object.fromEntries(
+                Object.entries(expense).filter(([key, value]) => value)
+            );
+            const params = new URLSearchParams(queryParams).toString();
+            const response = await fetch(`http://localhost:8080/expense/add?${params}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(expense),
                 credentials: 'include'
             });
             if (!response.ok) {
-                alert("Wrong values provided while adding new expense")
                 throw new Error('Failed to add expense');
             }
             fetchExpenses(filters);
@@ -73,6 +73,7 @@ function ExpenseTable() {
             console.error('Error adding expense:', error);
         }
     };
+
 
     const handleNewExpenseChange = (e) => {
         const { name, value } = e.target;
@@ -86,7 +87,6 @@ function ExpenseTable() {
         addExpense(newExpense);
         // Reset the new expense form
         setNewExpense({
-            userId: '',
             amount: '',
             operationType: '',
             type: '',
@@ -115,12 +115,6 @@ function ExpenseTable() {
         <div>
             <div style={styles.newExpenseContainer}>
                 <h2 style={styles.h2}>Add New Expense</h2>
-                <TextField
-                    name="userId"
-                    label="User ID"
-                    value={newExpense.userId}
-                    onChange={handleNewExpenseChange}
-                />
                 <TextField
                     name="amount"
                     label="Amount"
@@ -154,12 +148,6 @@ function ExpenseTable() {
 
             <div style={styles.expenseListContainer}>
                 <h2 style={styles.h2}>Your Expenses</h2>
-                <TextField
-                    name="userId"
-                    label="User ID"
-                    value={filters.userId}
-                    onChange={handleFilterChange}
-                />
                 <TextField
                     name="type"
                     label="Type"
