@@ -35,10 +35,10 @@ public class LoginPageController {
         }
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<String> test( HttpSession session) {
-        session.getAttribute("user");
-        System.out.println(session.getAttribute("user"));
-        return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return new ResponseEntity<>("Logout successful!", HttpStatus.OK);
     }
+
 }

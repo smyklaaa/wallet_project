@@ -101,9 +101,22 @@ function ExpenseTable() {
     };
 
     const handleLogout = async () => {
-        document.cookie = "loginDate=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "/login-page";
+        try {
+            const response = await fetch('http://localhost:8080/login-page/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = "/login-page";
+            } else {
+                console.error('Logout failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('An error occurred during logout:', error);
+        }
     };
+
 
     const debouncedFetchExpenses = useCallback(
         debounce((filters) => fetchExpenses(filters), 300),
@@ -312,8 +325,11 @@ const styles = {
         marginTop: '20px',
         display: 'block',
         backgroundColor: '#0b6bcb',
-        color: '#fff'
+        color: '#fff',
+        marginLeft: 'auto',
+        marginRight: 'auto'
     },
+
     logoutButton: {
         marginTop: '20px',
         display: 'block',
