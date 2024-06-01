@@ -34,6 +34,12 @@ public class LoginPageController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return new ResponseEntity<>("Logout successful!", HttpStatus.OK);
+    }
+
     @PostMapping("/test")
     public ResponseEntity<String> test( HttpSession session) {
         session.getAttribute("user");
