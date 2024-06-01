@@ -25,6 +25,7 @@ export default function App() {
                     <Route path="/login-page" element={<LoginPage/>}/>
                     <Route path="/registration-page" element={<RegistrationPage/>}/>
                     <Route path="/expenses" element={<ExpensePage/>}/>
+                    <Route path="/logout" element={<LoginPage/>}/>
                 </Routes>
 
                 {/*<Footer />*/}

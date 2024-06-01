@@ -7,7 +7,6 @@ import { isCookieExpired } from "./IsCookieExpired";
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
     const [filters, setFilters] = useState({
-        userId: 1,
         type: '',
         operationType: '',
         startDate: '',
@@ -15,7 +14,6 @@ function ExpenseTable() {
     });
 
     const [newExpense, setNewExpense] = useState({
-        userId: '',
         amount: '',
         operationType: '',
         type: '',
@@ -25,7 +23,8 @@ function ExpenseTable() {
     const expenseCategories = [
         'food', 'medicines', 'transport', 'entertainment', 'utilities', 'rent',
         'groceries', 'clothing', 'education', 'healthcare', 'insurance', 'investment',
-        'savings', 'travel', 'gifts', 'donations', 'pets', 'subscriptions', 'maintenance', 'miscellaneous'
+        'savings', 'travel', 'gifts', 'donations', 'pets', 'subscriptions', 'maintenance', 'miscellaneous',
+        'transfer'
     ];
 
     const formatDateTime = (dateString) => {
@@ -35,7 +34,7 @@ function ExpenseTable() {
     };
 
     const fetchExpenses = async (filters) => {
-        if (isCookieExpired("loginDate")) {
+        if (isCookieExpired("loginDate")){
             alert("wrong cookie")
         }
         try {
@@ -62,21 +61,49 @@ function ExpenseTable() {
 
     const addExpense = async (expense) => {
         try {
-            const response = await fetch('http://127.0.0.1:8080/expense/add', {
-                method: 'POST',
+            const queryParams = Object.fromEntries(
+                Object.entries(expense).filter(([key, value]) => value)
+            );
+            const params = new URLSearchParams(queryParams).toString();
+            const response = await fetch(`http://localhost:8080/expense/add?${params}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(expense),
                 credentials: 'include'
             });
             if (!response.ok) {
-                alert("Wrong values provided while adding new expense")
                 throw new Error('Failed to add expense');
             }
             fetchExpenses(filters);
         } catch (error) {
             console.error('Error adding expense:', error);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/login-page/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const cookies = document.cookie.split(";");
+
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i];
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                }
+
+                window.location.href = "/login-page";
+            } else {
+                console.error('Logout failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('An error occurred during logout:', error);
         }
     };
 
@@ -92,31 +119,12 @@ function ExpenseTable() {
         addExpense(newExpense);
         // Reset the new expense form
         setNewExpense({
-            userId: '',
             amount: '',
             operationType: '',
             type: '',
             date: ''
         });
     };
-
-    const handleLogout = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/login-page/logout', {
-                method: 'POST',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                window.location.href = "/login-page";
-            } else {
-                console.error('Logout failed:', response.statusText);
-            }
-        } catch (error) {
-            console.error('An error occurred during logout:', error);
-        }
-    };
-
 
     const debouncedFetchExpenses = useCallback(
         debounce((filters) => fetchExpenses(filters), 300),
@@ -140,15 +148,6 @@ function ExpenseTable() {
             <div style={styles.newExpenseContainer}>
                 <h2 style={styles.h2}>Add New Expense</h2>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={2}>
-                        <TextField
-                            name="userId"
-                            label="User ID"
-                            value={newExpense.userId}
-                            onChange={handleNewExpenseChange}
-                            fullWidth
-                        />
-                    </Grid>
                     <Grid item xs={12} sm={2}>
                         <TextField
                             name="amount"
@@ -210,15 +209,6 @@ function ExpenseTable() {
                 <h2 style={styles.h2}>Your Expenses</h2>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={2}>
-                        <TextField
-                            name="userId"
-                            label="User ID"
-                            value={filters.userId}
-                            onChange={handleFilterChange}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
                         <FormControl fullWidth>
                             <InputLabel>Type</InputLabel>
                             <Select
@@ -278,23 +268,27 @@ function ExpenseTable() {
                 </Grid>
 
                 <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Amount</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Operation Type</TableCell>
-                            <TableCell>Date</TableCell>
-                        </TableRow>
-                    </TableHead>
                     <TableBody>
-                        {expenses.map((expense) => (
-                            <TableRow key={expense.id}>
-                                <TableCell>{expense.amount}</TableCell>
-                                <TableCell>{expense.type}</TableCell>
-                                <TableCell>{expense.operationType}</TableCell>
-                                <TableCell>{expense.date}</TableCell>
-                            </TableRow>
-                        ))}
+                        {expenses.map((expense) => {
+                            const date = new Date(expense.date);
+                            const formattedDate = date.toLocaleString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            });
+
+                            return (
+                                <TableRow key={expense.id}>
+                                    <TableCell>{expense.amount}</TableCell>
+                                    <TableCell>{expense.type}</TableCell>
+                                    <TableCell>{expense.operationType}</TableCell>
+                                    <TableCell>{formattedDate}</TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </div>
