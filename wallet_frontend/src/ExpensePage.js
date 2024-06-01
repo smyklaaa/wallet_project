@@ -153,6 +153,8 @@ function ExpenseTable() {
                             name="amount"
                             label="Amount"
                             value={newExpense.amount}
+                            type="number"
+                            InputProps={{ inputProps: { min: 1} }}
                             onChange={handleNewExpenseChange}
                             fullWidth
                         />
