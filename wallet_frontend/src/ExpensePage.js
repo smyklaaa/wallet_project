@@ -3,6 +3,8 @@ import { Table, TableHead, TableBody, TableRow, TableCell, TextField, Select, Me
 import debounce from 'lodash.debounce';
 import Button from "@mui/joy/Button";
 import { isCookieExpired } from "./IsCookieExpired";
+import {useNavigate} from "react-router-dom";
+
 
 function ExpenseTable() {
     const [expenses, setExpenses] = useState([]);
@@ -12,6 +14,7 @@ function ExpenseTable() {
         startDate: '',
         endDate: ''
     });
+    const navigate = useNavigate();
 
     const [newExpense, setNewExpense] = useState({
         amount: '',
@@ -35,7 +38,7 @@ function ExpenseTable() {
 
     const fetchExpenses = async (filters) => {
         if (isCookieExpired("loginDate")){
-            alert("wrong cookie")
+            navigate('/login-page');
         }
         try {
             const queryParams = Object.fromEntries(
